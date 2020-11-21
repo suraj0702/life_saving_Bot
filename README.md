@@ -3,5 +3,5 @@ It is a robot car that can be used in areas like mining, sewage ,or other places
 ### images
 Image of robot car
 <img src="bot_img.jpeg">
-image of datas taken from dht11 sensor and gas sensor through bluetooth module
+image of datas taken from dht11 sensor and gas sensor through bluetooth module.
 <img src="mq.jpeg">
