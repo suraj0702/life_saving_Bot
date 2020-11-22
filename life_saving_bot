@@ -1,0 +1,180 @@
+const int trigPin = 3;
+const int echoPin = 5;
+#define m11 11    // rear motor
+#define m12 12
+#define m21 10    // front motor
+#define m22 9
+#include <Servo.h>
+
+Servo myservo;  // create servo object to control a servo
+// twelve servo objects can be created on most boards
+
+int pos = 0;  // variable to store the servo position
+
+#include<dht.h>
+
+dht DHT;
+#define DHT11_PIN 8
+int sensorValue;
+int digitalValue;
+void forward()
+{
+   digitalWrite(m11, LOW);
+   digitalWrite(m12, HIGH);
+   digitalWrite(m21, HIGH);
+   digitalWrite(m22, LOW);
+}
+
+void backward()
+{
+   digitalWrite(m11, HIGH);
+   digitalWrite(m12, LOW);
+   digitalWrite(m21, LOW);
+   digitalWrite(m22, HIGH); 
+}
+
+void right()
+{    
+   digitalWrite(m11, HIGH);
+   digitalWrite(m12, LOW);
+   delay(100);
+   digitalWrite(m21, HIGH);
+   digitalWrite(m22, LOW);
+}
+
+void left()
+{
+   digitalWrite(m11, LOW);
+   digitalWrite(m12, HIGH);
+   delay(100);
+   digitalWrite(m21, LOW);
+   digitalWrite(m22, HIGH);
+}
+
+void Stop()
+{
+   digitalWrite(m11, LOW);
+   digitalWrite(m12, LOW);
+   digitalWrite(m21, LOW);
+   digitalWrite(m22, LOW);
+}
+void bendr()
+{ 
+   digitalWrite(m11, LOW);
+   digitalWrite(m12, LOW);
+   digitalWrite(m21, HIGH);
+   digitalWrite(m22, LOW);
+   delay(2000);
+   digitalWrite(m12, HIGH);
+   }
+   void bendl()
+{
+   digitalWrite(m11, LOW);
+   digitalWrite(m12, HIGH);
+   digitalWrite(m21,LOW);
+   digitalWrite(m22, LOW);
+   delay(2000);
+   digitalWrite(m21, HIGH);
+   
+   }
+
+void setup() 
+{
+
+  Serial.begin(9600); // sets the serial port to 9600
+pinMode(2, OUTPUT);
+pinMode( 8, INPUT);
+  myservo.attach(7);  // attaches the servo on pin 9 to the servo object
+
+
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  Serial.begin(9600); 
+ 
+}
+long duration, distance;
+
+void loop()
+{
+
+sensorValue = analogRead(0); // read analog input pin 0
+
+digitalValue = digitalRead(2); 
+if(sensorValue>400)
+{
+digitalWrite(2, HIGH);
+}
+else
+digitalWrite(2, LOW);
+Serial.println("concentration of smoke and combutiable gass");
+Serial.println(sensorValue, DEC); // prints the value read
+Serial.println(digitalValue, DEC);
+
+delay(2000); // wait 100ms for next reading
+int chk = DHT.read11(DHT11_PIN);
+
+Serial.println(" Humidity " );
+
+Serial.println(DHT.humidity, 1);
+
+Serial.println(" Temparature ");
+
+Serial.println(DHT.temperature, 1);
+
+delay(2000);
+
+   
+ int distancel=0;
+ int distancer=0;
+     
+  
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);  
+  duration = pulseIn(echoPin, HIGH);
+  distance= duration*0.034/2;
+  
+  Serial.print("Distance: ");
+Serial.println(distance);
+
+  if(distance<=10)
+   { 
+      Stop();
+      delay(300);
+      for (pos = 0; pos <= 90; pos += 1) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  
+
+   distancel=distance;}
+   delay(300);
+   for (pos = 90; pos <=180; pos += 1) { // goes from 180 degrees to 0 degrees
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+          
+          distancer=distance;} 
+             for (pos = 180; pos >=90; pos -= 1) { // goes from 180 degrees to 0 degrees
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);}
+            if(distancer>=distancel)
+            {
+            bendr(); 
+            }                 
+            else
+            
+            {
+            bendl();}
+            
+    }                         
+  else
+    {
+  
+
+  forward();
+
+    }  
+  delay(0);
+}
